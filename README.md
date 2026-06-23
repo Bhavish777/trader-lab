@@ -2,9 +2,9 @@
 
 Trader Lab is a paper trading and portfolio analytics project.
 
-The goal is to let users practice trading with virtual money, track their portfolio, review trade history, and understand profit and loss before using real money.
+The goal is to help users practice trading with virtual money, track holdings, review trade history, and understand basic portfolio performance before using real money.
 
-## Version 1 Goals
+## Version 1 Features
 
 - Start with virtual cash
 - Buy stocks
@@ -13,16 +13,77 @@ The goal is to let users practice trading with virtual money, track their portfo
 - Track trade history
 - Show cash balance
 - Show portfolio value
-- Calculate basic profit and loss
+- Show basic profit and loss
+- Reset demo portfolio
 
 ## Tech Stack
 
 - Backend: FastAPI
-- Frontend: React
-- Database: SQLite first, PostgreSQL later
-- Charts: Recharts or Plotly later
-- Stock data: yfinance first
+- Database: SQLite
+- ORM: SQLAlchemy
+- Validation: Pydantic
+- Frontend: React later
+- Market data: yfinance later
 
-## Project Status
+## Project Structure
 
-This project is in the early setup stage.
+trader-lab/
+  backend/
+    app/
+      main.py
+      database.py
+      dependencies.py
+      models.py
+      schemas.py
+      routes/
+      services/
+  frontend/
+  docs/
+  README.md
+
+## Run Backend Locally
+
+Go to the backend folder:
+
+cd backend
+
+Create a virtual environment:
+
+python3 -m venv .venv
+
+Activate it:
+
+source .venv/bin/activate
+
+Install dependencies:
+
+pip install -r requirements.txt
+
+Run the API:
+
+uvicorn app.main:app --reload --port 8002
+
+Open:
+
+http://127.0.0.1:8002
+
+API docs:
+
+http://127.0.0.1:8002/docs
+
+## Main API Endpoints
+
+GET  /
+POST /trades/buy
+POST /trades/sell
+GET  /trades
+GET  /portfolio/holdings
+GET  /portfolio/cash
+GET  /portfolio/summary
+POST /portfolio/reset
+
+## Current Status
+
+Phase 1 backend is in progress.
+
+The current backend supports basic paper trading, portfolio tracking, trade history, holdings, cash balance, portfolio summary, and portfolio reset.
