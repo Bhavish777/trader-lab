@@ -15,6 +15,7 @@ class TradeResponse(BaseModel):
     trade_type: str
     quantity: int
     price: float
+    total_value: float
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
@@ -25,6 +26,7 @@ class HoldingResponse(BaseModel):
     symbol: str
     quantity: int
     average_price: float
+    invested_amount: float
 
     model_config = ConfigDict(from_attributes=True)
 

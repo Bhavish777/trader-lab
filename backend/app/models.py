@@ -24,6 +24,10 @@ class Trade(Base):
     price = Column(Float)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    @property
+    def total_value(self) -> float:
+        return self.quantity * self.price
+
 
 class Holding(Base):
     __tablename__ = "holdings"
@@ -32,3 +36,7 @@ class Holding(Base):
     symbol = Column(String, unique=True, index=True)
     quantity = Column(Integer)
     average_price = Column(Float)
+
+    @property
+    def invested_amount(self) -> float:
+        return self.quantity * self.average_price
