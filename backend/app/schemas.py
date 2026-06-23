@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TradeCreate(BaseModel):
@@ -14,5 +14,24 @@ class TradeResponse(BaseModel):
     quantity: int
     price: float
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+
+class HoldingResponse(BaseModel):
+    id: int
+    symbol: str
+    quantity: int
+    average_price: float
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CashBalanceResponse(BaseModel):
+    cash_balance: float
+
+
+class PortfolioSummaryResponse(BaseModel):
+    cash_balance: float
+    invested_amount: float
+    portfolio_value: float
+    holdings_count: int

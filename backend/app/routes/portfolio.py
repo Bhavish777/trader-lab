@@ -3,24 +3,25 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 from app.models import Holding
+from app.schemas import CashBalanceResponse, HoldingResponse, PortfolioSummaryResponse
 from app.services.trading import get_or_create_portfolio
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
 
 
-@router.get("/holdings")
+@router.get("/holdings", response_model=list[HoldingResponse])
 def get_holdings(db: Session = Depends(get_db)):
-    return db.query(Holding).all()
+    return db.query(Holding).order_by(Holding.symbol).all()
 
 
-@router.get("/cash")
+@router.get("/cash", response_model=CashBalanceResponse)
 def get_cash_balance(db: Session = Depends(get_db)):
     portfolio = get_or_create_portfolio(db)
 
     return {"cash_balance": portfolio.cash_balance}
 
 
-@router.get("/summary")
+@router.get("/summary", response_model=PortfolioSummaryResponse)
 def get_portfolio_summary(db: Session = Depends(get_db)):
     portfolio = get_or_create_portfolio(db)
     holdings = db.query(Holding).all()
@@ -30,11 +31,9 @@ def get_portfolio_summary(db: Session = Depends(get_db)):
         for holding in holdings
     )
 
-    portfolio_value = portfolio.cash_balance + invested_amount
-
     return {
         "cash_balance": portfolio.cash_balance,
         "invested_amount": invested_amount,
-        "portfolio_value": portfolio_value,
+        "portfolio_value": portfolio.cash_balance + invested_amount,
         "holdings_count": len(holdings),
     }
