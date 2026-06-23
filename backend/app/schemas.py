@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -13,6 +15,7 @@ class TradeResponse(BaseModel):
     trade_type: str
     quantity: int
     price: float
+    created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
