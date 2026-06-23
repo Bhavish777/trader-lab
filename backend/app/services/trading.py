@@ -4,10 +4,12 @@ from app.models import Holding, Portfolio, Trade
 
 
 def clean_symbol(symbol: str) -> str:
+    """Normalize stock symbols before storing or searching them."""
     return symbol.strip().upper()
 
 
 def get_or_create_portfolio(db: Session) -> Portfolio:
+    """Return the main demo portfolio, or create it if it does not exist."""
     portfolio = db.query(Portfolio).first()
 
     if portfolio:
@@ -22,6 +24,7 @@ def get_or_create_portfolio(db: Session) -> Portfolio:
 
 
 def buy_stock(db: Session, symbol: str, quantity: int, price: float) -> Trade:
+    """Buy a stock using virtual cash and update the user's holding."""
     symbol = clean_symbol(symbol)
     portfolio = get_or_create_portfolio(db)
     total_cost = quantity * price
@@ -63,6 +66,7 @@ def buy_stock(db: Session, symbol: str, quantity: int, price: float) -> Trade:
 
 
 def sell_stock(db: Session, symbol: str, quantity: int, price: float) -> Trade:
+    """Sell owned shares, update cash, and reduce or remove the holding."""
     symbol = clean_symbol(symbol)
     portfolio = get_or_create_portfolio(db)
     holding = db.query(Holding).filter(Holding.symbol == symbol).first()
