@@ -12,3 +12,14 @@ class Portfolio(Base):
     name = Column(String, default="Main Portfolio")
     cash_balance = Column(Float, default=100000.0)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class Trade(Base):
+    __tablename__ = "trades"
+
+    id = Column(Integer, primary_key=True, index=True)
+    symbol = Column(String, index=True)
+    trade_type = Column(String)
+    quantity = Column(Integer)
+    price = Column(Float)
+    created_at = Column(DateTime, default=datetime.utcnow)
