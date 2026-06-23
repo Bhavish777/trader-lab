@@ -23,3 +23,12 @@ class Trade(Base):
     quantity = Column(Integer)
     price = Column(Float)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class Holding(Base):
+    __tablename__ = "holdings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    symbol = Column(String, unique=True, index=True)
+    quantity = Column(Integer)
+    average_price = Column(Float)
