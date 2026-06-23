@@ -60,3 +60,34 @@ def buy_stock(db: Session, symbol: str, quantity: int, price: float) -> Trade:
     db.refresh(trade)
 
     return trade
+
+
+def sell_stock(db: Session, symbol: str, quantity: int, price: float) -> Trade:
+    symbol = clean_symbol(symbol)
+    portfolio = get_or_create_portfolio(db)
+    holding = db.query(Holding).filter(Holding.symbol == symbol).first()
+
+    if not holding:
+        raise ValueError("You do not own this stock")
+
+    if quantity > holding.quantity:
+        raise ValueError("Not enough shares to sell")
+
+    trade = Trade(
+        symbol=symbol,
+        trade_type="SELL",
+        quantity=quantity,
+        price=price,
+    )
+
+    holding.quantity -= quantity
+    portfolio.cash_balance += quantity * price
+
+    if holding.quantity == 0:
+        db.delete(holding)
+
+    db.add(trade)
+    db.commit()
+    db.refresh(trade)
+
+    return trade
