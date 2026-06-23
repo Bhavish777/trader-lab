@@ -82,3 +82,73 @@ def test_basic_trading_flow():
     assert len(trades) == 2
     assert trades[0]["trade_type"] == "SELL"
     assert trades[1]["trade_type"] == "BUY"
+
+
+def test_cannot_buy_without_enough_cash():
+    client.post("/portfolio/reset")
+
+    response = client.post(
+        "/trades/buy",
+        json={
+            "symbol": "TSLA",
+            "quantity": 1000,
+            "price": 1000,
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Not enough cash to complete this trade"
+
+
+def test_cannot_sell_stock_not_owned():
+    client.post("/portfolio/reset")
+
+    response = client.post(
+        "/trades/sell",
+        json={
+            "symbol": "MSFT",
+            "quantity": 1,
+            "price": 300,
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "You do not own this stock"
+
+
+def test_cannot_sell_more_than_owned():
+    client.post("/portfolio/reset")
+
+    client.post(
+        "/trades/buy",
+        json={
+            "symbol": "NVDA",
+            "quantity": 2,
+            "price": 100,
+        },
+    )
+
+    response = client.post(
+        "/trades/sell",
+        json={
+            "symbol": "NVDA",
+            "quantity": 5,
+            "price": 120,
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Not enough shares to sell"
+
+
+def test_invalid_trade_quantity_is_rejected():
+    response = client.post(
+        "/trades/buy",
+        json={
+            "symbol": "AAPL",
+            "quantity": 0,
+            "price": 100,
+        },
+    )
+
+    assert response.status_code == 422
