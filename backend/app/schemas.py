@@ -34,7 +34,10 @@ class CashBalanceResponse(BaseModel):
 
 
 class PortfolioSummaryResponse(BaseModel):
+    starting_balance: float
     cash_balance: float
     invested_amount: float
     portfolio_value: float
+    total_gain_loss: float
+    total_return_percent: float
     holdings_count: int

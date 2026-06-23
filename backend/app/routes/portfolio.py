@@ -8,6 +8,8 @@ from app.services.trading import get_or_create_portfolio
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
 
+STARTING_BALANCE = 100000.0
+
 
 @router.get("/holdings", response_model=list[HoldingResponse])
 def get_holdings(db: Session = Depends(get_db)):
@@ -31,9 +33,16 @@ def get_portfolio_summary(db: Session = Depends(get_db)):
         for holding in holdings
     )
 
+    portfolio_value = portfolio.cash_balance + invested_amount
+    total_gain_loss = portfolio_value - STARTING_BALANCE
+    total_return_percent = (total_gain_loss / STARTING_BALANCE) * 100
+
     return {
+        "starting_balance": STARTING_BALANCE,
         "cash_balance": portfolio.cash_balance,
         "invested_amount": invested_amount,
-        "portfolio_value": portfolio.cash_balance + invested_amount,
+        "portfolio_value": portfolio_value,
+        "total_gain_loss": total_gain_loss,
+        "total_return_percent": total_return_percent,
         "holdings_count": len(holdings),
     }
