@@ -2,8 +2,13 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
-from app.models import Holding
-from app.schemas import CashBalanceResponse, HoldingResponse, PortfolioSummaryResponse
+from app.models import Holding, Trade
+from app.schemas import (
+    CashBalanceResponse,
+    HoldingResponse,
+    PortfolioResetResponse,
+    PortfolioSummaryResponse,
+)
 from app.services.trading import get_or_create_portfolio
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
@@ -45,4 +50,22 @@ def get_portfolio_summary(db: Session = Depends(get_db)):
         "total_gain_loss": total_gain_loss,
         "total_return_percent": total_return_percent,
         "holdings_count": len(holdings),
+    }
+
+
+@router.post("/reset", response_model=PortfolioResetResponse)
+def reset_portfolio(db: Session = Depends(get_db)):
+    portfolio = get_or_create_portfolio(db)
+
+    db.query(Trade).delete()
+    db.query(Holding).delete()
+
+    portfolio.cash_balance = STARTING_BALANCE
+
+    db.commit()
+    db.refresh(portfolio)
+
+    return {
+        "message": "Portfolio reset successfully",
+        "cash_balance": portfolio.cash_balance,
     }

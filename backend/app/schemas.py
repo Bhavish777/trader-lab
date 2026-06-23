@@ -41,3 +41,8 @@ class PortfolioSummaryResponse(BaseModel):
     total_gain_loss: float
     total_return_percent: float
     holdings_count: int
+
+
+class PortfolioResetResponse(BaseModel):
+    message: str
+    cash_balance: float
