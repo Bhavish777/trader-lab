@@ -25,6 +25,6 @@ def sell_trade(trade: TradeCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(error)) from error
 
 
-@router.get("")
+@router.get("", response_model=list[TradeResponse])
 def get_trades(db: Session = Depends(get_db)):
     return db.query(Trade).order_by(Trade.created_at.desc()).all()
