@@ -7,12 +7,14 @@ from app.schemas import (
     HoldingResponse,
     PortfolioResetResponse,
     PortfolioSummaryResponse,
+    PricedHoldingResponse,
 )
 from app.services.portfolio import (
     calculate_portfolio_summary,
     get_holdings,
     reset_portfolio,
 )
+from app.services.portfolio_pricing import price_holdings
 from app.services.trading import get_or_create_portfolio
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
@@ -21,6 +23,14 @@ router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
 @router.get("/holdings", response_model=list[HoldingResponse])
 def get_portfolio_holdings(db: Session = Depends(get_db)):
     return get_holdings(db)
+
+
+@router.get("/priced-holdings", response_model=list[PricedHoldingResponse])
+def get_priced_portfolio_holdings(db: Session = Depends(get_db)):
+    """Return holdings with latest market value and unrealized P&L."""
+    holdings = get_holdings(db)
+
+    return price_holdings(holdings)
 
 
 @router.get("/cash", response_model=CashBalanceResponse)
