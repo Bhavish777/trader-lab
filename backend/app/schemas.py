@@ -48,3 +48,11 @@ class PortfolioSummaryResponse(BaseModel):
 class PortfolioResetResponse(BaseModel):
     message: str
     cash_balance: float
+
+class StockQuoteResponse(BaseModel):
+    symbol: str
+    price: float
+    currency: str
+    source: str
+    last_updated: str
+
