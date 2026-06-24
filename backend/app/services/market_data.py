@@ -1,4 +1,9 @@
+from datetime import datetime, timedelta, timezone
+
 import yfinance as yf
+
+QUOTE_CACHE = {}
+CACHE_TTL_SECONDS = 300
 
 
 def clean_market_symbol(symbol: str) -> str:
@@ -6,9 +11,23 @@ def clean_market_symbol(symbol: str) -> str:
     return symbol.strip().upper()
 
 
+def _is_cache_fresh(cached_quote: dict) -> bool:
+    """Check whether a cached quote is still recent enough to reuse."""
+    cached_at = cached_quote["cached_at"]
+    expires_at = cached_at + timedelta(seconds=CACHE_TTL_SECONDS)
+
+    return datetime.now(timezone.utc) < expires_at
+
+
 def get_latest_quote(symbol: str) -> dict:
-    """Fetch the latest available closing price for a stock symbol."""
+    """Fetch the latest available closing price, using cache when possible."""
     symbol = clean_market_symbol(symbol)
+
+    cached_quote = QUOTE_CACHE.get(symbol)
+
+    if cached_quote and _is_cache_fresh(cached_quote):
+        return cached_quote["data"]
+
     ticker = yf.Ticker(symbol)
 
     # Use a few days because markets may be closed on weekends or holidays.
@@ -25,10 +44,17 @@ def get_latest_quote(symbol: str) -> dict:
     except Exception:
         currency = "USD"
 
-    return {
+    quote = {
         "symbol": symbol,
         "price": round(float(latest_row["Close"]), 2),
         "currency": currency,
         "source": "yfinance",
         "last_updated": latest_date.isoformat(),
     }
+
+    QUOTE_CACHE[symbol] = {
+        "data": quote,
+        "cached_at": datetime.now(timezone.utc),
+    }
+
+    return quote
