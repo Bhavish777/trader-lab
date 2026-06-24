@@ -44,4 +44,19 @@ curl -s "$BASE_URL/trades"
 echo
 echo
 
+echo "8. Stock search"
+curl -s "$BASE_URL/market/search?query=apple"
+echo
+echo
+
+echo "9. Stock quote"
+curl -s "$BASE_URL/market/quote/AAPL"
+echo
+echo
+
+echo "10. Stock history"
+curl -s "$BASE_URL/market/history/AAPL?period=5d"
+echo
+echo
+
 echo "Smoke test complete."
