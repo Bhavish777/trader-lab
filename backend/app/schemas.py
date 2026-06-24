@@ -31,6 +31,18 @@ class HoldingResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class PricedHoldingResponse(BaseModel):
+    symbol: str
+    quantity: int
+    average_price: float
+    invested_amount: float
+    current_price: float
+    market_value: float
+    unrealized_gain_loss: float
+    unrealized_return_percent: float
+    price_source: str
+
+
 class CashBalanceResponse(BaseModel):
     cash_balance: float
 
@@ -49,12 +61,14 @@ class PortfolioResetResponse(BaseModel):
     message: str
     cash_balance: float
 
+
 class StockQuoteResponse(BaseModel):
     symbol: str
     price: float
     currency: str
     source: str
     last_updated: str
+
 
 class StockHistoryPointResponse(BaseModel):
     date: str
@@ -64,10 +78,10 @@ class StockHistoryPointResponse(BaseModel):
     close: float
     volume: int
 
+
 class StockSearchResultResponse(BaseModel):
     symbol: str
     name: str
     exchange: str
     country: str
     currency: str
-
