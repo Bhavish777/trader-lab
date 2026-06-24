@@ -87,3 +87,76 @@ POST /portfolio/reset
 Phase 1 backend is in progress.
 
 The current backend supports basic paper trading, portfolio tracking, trade history, holdings, cash balance, portfolio summary, and portfolio reset.
+
+## Market Data Pipeline
+
+Trader Lab includes a basic market data pipeline for stock quotes, price history, and user-friendly stock search.
+
+The pipeline currently uses yfinance for latest available stock data.
+
+Current market data endpoints:
+
+GET /market/search?query=apple
+GET /market/quote/AAPL
+GET /market/history/AAPL
+GET /market/history/AAPL?period=3mo
+
+### Stock Search
+
+Users do not need to know ticker symbols.
+
+Example:
+
+Search:
+apple
+
+Result:
+AAPL - Apple Inc.
+
+Search:
+reliance
+
+Result:
+RELIANCE.NS - Reliance Industries Limited
+
+Search:
+shopify
+
+Result:
+SHOP - Shopify Inc.
+SHOP.TO - Shopify Inc.
+
+### Quote Endpoint
+
+Example:
+
+GET /market/quote/AAPL
+
+Returns:
+
+symbol
+price
+currency
+source
+last_updated
+
+### History Endpoint
+
+Example:
+
+GET /market/history/AAPL?period=1mo
+
+Returns daily price data for charts:
+
+date
+open
+high
+low
+close
+volume
+
+### Notes
+
+Market prices are latest available prices from the data provider, not guaranteed real-time trading prices.
+
+The project uses a service layer so the data provider can be changed later without rewriting the whole backend.
