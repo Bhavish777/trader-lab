@@ -56,3 +56,11 @@ class StockQuoteResponse(BaseModel):
     source: str
     last_updated: str
 
+class StockHistoryPointResponse(BaseModel):
+    date: str
+    open: float
+    high: float
+    low: float
+    close: float
+    volume: int
+

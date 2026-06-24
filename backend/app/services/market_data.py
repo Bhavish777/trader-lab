@@ -58,3 +58,30 @@ def get_latest_quote(symbol: str) -> dict:
     }
 
     return quote
+
+
+def get_price_history(symbol: str, period: str = "1mo") -> list[dict]:
+    """Fetch historical daily prices for charts and future backtesting."""
+    symbol = clean_market_symbol(symbol)
+    ticker = yf.Ticker(symbol)
+
+    history = ticker.history(period=period, interval="1d")
+
+    if history.empty:
+        raise ValueError("No historical market data found for this symbol")
+
+    price_points = []
+
+    for date, row in history.iterrows():
+        price_points.append(
+            {
+                "date": date.date().isoformat(),
+                "open": round(float(row["Open"]), 2),
+                "high": round(float(row["High"]), 2),
+                "low": round(float(row["Low"]), 2),
+                "close": round(float(row["Close"]), 2),
+                "volume": int(row["Volume"]),
+            }
+        )
+
+    return price_points
