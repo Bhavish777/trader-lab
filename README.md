@@ -160,3 +160,49 @@ volume
 Market prices are latest available prices from the data provider, not guaranteed real-time trading prices.
 
 The project uses a service layer so the data provider can be changed later without rewriting the whole backend.
+
+## Market-Priced Portfolio
+
+Trader Lab can calculate portfolio values using the latest available market prices.
+
+This allows the backend to show:
+
+- Current price per holding
+- Market value per holding
+- Unrealized gain or loss
+- Unrealized return percentage
+- Total portfolio value using market prices
+
+Current portfolio pricing endpoints:
+
+GET /portfolio/holdings
+GET /portfolio/priced-holdings
+GET /portfolio/summary
+
+### Priced Holdings
+
+Example:
+
+GET /portfolio/priced-holdings
+
+Returns each holding with:
+
+symbol
+quantity
+average_price
+invested_amount
+current_price
+market_value
+unrealized_gain_loss
+unrealized_return_percent
+price_source
+
+### Portfolio Summary
+
+Example:
+
+GET /portfolio/summary
+
+The portfolio summary now uses latest available market prices when possible.
+
+If market data is unavailable, Trader Lab falls back to the holding average price so the portfolio still works.
