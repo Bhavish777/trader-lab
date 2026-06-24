@@ -1,9 +1,23 @@
 from fastapi import APIRouter, HTTPException, Query
 
-from app.schemas import StockHistoryPointResponse, StockQuoteResponse
+from app.schemas import (
+    StockHistoryPointResponse,
+    StockQuoteResponse,
+    StockSearchResultResponse,
+)
 from app.services.market_data import get_latest_quote, get_price_history
+from app.services.symbol_resolver import search_symbols
 
 router = APIRouter(prefix="/market", tags=["Market"])
+
+
+@router.get("/search", response_model=list[StockSearchResultResponse])
+def search_stock_symbols(
+    query: str = Query(min_length=1, max_length=50),
+    country: str | None = None,
+):
+    """Search stocks by company name, ticker, or common user-friendly terms."""
+    return search_symbols(query, country)
 
 
 @router.get("/quote/{symbol}", response_model=StockQuoteResponse)

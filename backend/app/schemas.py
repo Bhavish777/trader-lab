@@ -64,3 +64,10 @@ class StockHistoryPointResponse(BaseModel):
     close: float
     volume: int
 
+class StockSearchResultResponse(BaseModel):
+    symbol: str
+    name: str
+    exchange: str
+    country: str
+    currency: str
+
