@@ -12,7 +12,24 @@ def test_health_check():
     assert response.json() == {"message": "Trader Lab API is running"}
 
 
-def test_basic_trading_flow():
+def test_basic_trading_flow(monkeypatch):
+    def fake_price_holdings(holdings):
+        return [
+            {
+                "symbol": "AAPL",
+                "quantity": 1,
+                "average_price": 100.0,
+                "invested_amount": 100.0,
+                "current_price": 120.0,
+                "market_value": 120.0,
+                "unrealized_gain_loss": 20.0,
+                "unrealized_return_percent": 20.0,
+                "price_source": "test",
+            }
+        ]
+
+    monkeypatch.setattr("app.services.portfolio.price_holdings", fake_price_holdings)
+
     reset_response = client.post("/portfolio/reset")
     assert reset_response.status_code == 200
     assert reset_response.json()["cash_balance"] == 100000.0
@@ -70,9 +87,9 @@ def test_basic_trading_flow():
     assert summary["starting_balance"] == 100000.0
     assert summary["cash_balance"] == 99920.0
     assert summary["invested_amount"] == 100.0
-    assert summary["portfolio_value"] == 100020.0
-    assert summary["total_gain_loss"] == 20.0
-    assert summary["total_return_percent"] == 0.02
+    assert summary["portfolio_value"] == 100040.0
+    assert summary["total_gain_loss"] == 40.0
+    assert summary["total_return_percent"] == 0.04
     assert summary["holdings_count"] == 1
 
     trades_response = client.get("/trades")

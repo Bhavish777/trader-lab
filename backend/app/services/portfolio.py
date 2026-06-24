@@ -1,40 +1,49 @@
 from sqlalchemy.orm import Session
 
+from app.config import STARTING_BALANCE
 from app.models import Holding, Trade
+from app.services.portfolio_pricing import price_holdings
 from app.services.trading import get_or_create_portfolio
-
-STARTING_BALANCE = 100000.0
 
 
 def get_holdings(db: Session):
+    """Return portfolio holdings sorted by ticker symbol."""
     return db.query(Holding).order_by(Holding.symbol).all()
 
 
 def calculate_portfolio_summary(db: Session) -> dict:
+    """Calculate portfolio value using latest available market prices."""
     portfolio = get_or_create_portfolio(db)
     holdings = db.query(Holding).all()
+    priced_holdings = price_holdings(holdings)
 
     invested_amount = sum(
-        holding.quantity * holding.average_price
-        for holding in holdings
+        holding["invested_amount"]
+        for holding in priced_holdings
     )
 
-    portfolio_value = portfolio.cash_balance + invested_amount
+    market_value = sum(
+        holding["market_value"]
+        for holding in priced_holdings
+    )
+
+    portfolio_value = portfolio.cash_balance + market_value
     total_gain_loss = portfolio_value - STARTING_BALANCE
     total_return_percent = (total_gain_loss / STARTING_BALANCE) * 100
 
     return {
         "starting_balance": STARTING_BALANCE,
-        "cash_balance": portfolio.cash_balance,
-        "invested_amount": invested_amount,
-        "portfolio_value": portfolio_value,
-        "total_gain_loss": total_gain_loss,
-        "total_return_percent": total_return_percent,
+        "cash_balance": round(portfolio.cash_balance, 2),
+        "invested_amount": round(invested_amount, 2),
+        "portfolio_value": round(portfolio_value, 2),
+        "total_gain_loss": round(total_gain_loss, 2),
+        "total_return_percent": round(total_return_percent, 2),
         "holdings_count": len(holdings),
     }
 
 
 def reset_portfolio(db: Session) -> dict:
+    """Reset the demo portfolio back to its starting state."""
     portfolio = get_or_create_portfolio(db)
 
     db.query(Trade).delete()
