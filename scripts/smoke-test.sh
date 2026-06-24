@@ -34,27 +34,32 @@ curl -s "$BASE_URL/portfolio/holdings"
 echo
 echo
 
-echo "6. Portfolio summary"
+echo "6. Priced portfolio holdings"
+curl -s "$BASE_URL/portfolio/priced-holdings"
+echo
+echo
+
+echo "7. Portfolio summary"
 curl -s "$BASE_URL/portfolio/summary"
 echo
 echo
 
-echo "7. Trade history"
+echo "8. Trade history"
 curl -s "$BASE_URL/trades"
 echo
 echo
 
-echo "8. Stock search"
+echo "9. Stock search"
 curl -s "$BASE_URL/market/search?query=apple"
 echo
 echo
 
-echo "9. Stock quote"
+echo "10. Stock quote"
 curl -s "$BASE_URL/market/quote/AAPL"
 echo
 echo
 
-echo "10. Stock history"
+echo "11. Stock history"
 curl -s "$BASE_URL/market/history/AAPL?period=5d"
 echo
 echo
