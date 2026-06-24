@@ -2,28 +2,40 @@
 
 Trader Lab is a paper trading and portfolio analytics project.
 
-The goal is to help users practice trading with virtual money, track holdings, review trade history, and understand basic portfolio performance before using real money.
+The goal is to help users practice trading with virtual money, track holdings, review trade history, search stocks, and understand portfolio performance before using real money.
 
-## Version 1 Features
+## Phase 1 Status
 
-- Start with virtual cash
-- Buy stocks
-- Sell stocks
-- Track holdings
-- Track trade history
-- Show cash balance
-- Show portfolio value
-- Show basic profit and loss
-- Reset demo portfolio
+Phase 1 backend MVP is complete.
+
+The backend currently supports:
+
+- Virtual cash balance
+- Buy stock trades
+- Sell stock trades
+- Trade history
+- Portfolio holdings
+- Cash balance
+- Portfolio summary
+- Portfolio reset
+- Stock quote lookup
+- Stock price history
+- Company name search
+- Market-priced holdings
+- Unrealized gain and loss
+- Fallback pricing when market data is unavailable
+- Backend tests
+- Local smoke test script
 
 ## Tech Stack
 
-- Backend: FastAPI
-- Database: SQLite
-- ORM: SQLAlchemy
-- Validation: Pydantic
-- Frontend: React later
-- Market data: yfinance later
+- Python
+- FastAPI
+- SQLite
+- SQLAlchemy
+- Pydantic
+- yfinance
+- pytest
 
 ## Project Structure
 
@@ -37,8 +49,11 @@ trader-lab/
       schemas.py
       routes/
       services/
-  frontend/
+    tests/
+    requirements.txt
   docs/
+  frontend/
+  scripts/
   README.md
 
 ## Run Backend Locally
@@ -57,152 +72,126 @@ source .venv/bin/activate
 
 Install dependencies:
 
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 Run the API:
 
 uvicorn app.main:app --reload --port 8002
 
-Open:
+Open the API:
 
 http://127.0.0.1:8002
 
-API docs:
+Open API docs:
 
 http://127.0.0.1:8002/docs
 
-## Main API Endpoints
+## Core API Endpoints
 
-GET  /
+Health check:
+
+GET /
+
+Trading:
+
 POST /trades/buy
 POST /trades/sell
-GET  /trades
-GET  /portfolio/holdings
-GET  /portfolio/cash
-GET  /portfolio/summary
+GET /trades
+
+Portfolio:
+
+GET /portfolio/holdings
+GET /portfolio/priced-holdings
+GET /portfolio/cash
+GET /portfolio/summary
 POST /portfolio/reset
 
-## Current Status
-
-Phase 1 backend is in progress.
-
-The current backend supports basic paper trading, portfolio tracking, trade history, holdings, cash balance, portfolio summary, and portfolio reset.
-
-## Market Data Pipeline
-
-Trader Lab includes a basic market data pipeline for stock quotes, price history, and user-friendly stock search.
-
-The pipeline currently uses yfinance for latest available stock data.
-
-Current market data endpoints:
+Market data:
 
 GET /market/search?query=apple
 GET /market/quote/AAPL
 GET /market/history/AAPL
 GET /market/history/AAPL?period=3mo
 
-### Stock Search
+## Market Data Pipeline
 
-Users do not need to know ticker symbols.
+Trader Lab uses a simple market data pipeline:
+
+User search or ticker
+  -> clean input
+  -> resolve ticker or fetch quote
+  -> fetch latest available market data
+  -> clean response
+  -> return data to API
 
 Example:
 
 Search:
+
 apple
 
 Result:
+
 AAPL - Apple Inc.
 
-Search:
-reliance
-
-Result:
-RELIANCE.NS - Reliance Industries Limited
-
-Search:
-shopify
-
-Result:
-SHOP - Shopify Inc.
-SHOP.TO - Shopify Inc.
-
-### Quote Endpoint
-
-Example:
+Quote:
 
 GET /market/quote/AAPL
 
-Returns:
-
-symbol
-price
-currency
-source
-last_updated
-
-### History Endpoint
-
-Example:
+History:
 
 GET /market/history/AAPL?period=1mo
 
-Returns daily price data for charts:
-
-date
-open
-high
-low
-close
-volume
-
-### Notes
-
-Market prices are latest available prices from the data provider, not guaranteed real-time trading prices.
-
-The project uses a service layer so the data provider can be changed later without rewriting the whole backend.
+Market prices are latest available prices from the data provider and are not guaranteed real-time trading prices.
 
 ## Market-Priced Portfolio
 
-Trader Lab can calculate portfolio values using the latest available market prices.
+Trader Lab can calculate portfolio values using latest available market prices.
 
-This allows the backend to show:
+Priced holdings include:
 
-- Current price per holding
-- Market value per holding
+- Current price
+- Market value
 - Unrealized gain or loss
 - Unrealized return percentage
-- Total portfolio value using market prices
-
-Current portfolio pricing endpoints:
-
-GET /portfolio/holdings
-GET /portfolio/priced-holdings
-GET /portfolio/summary
-
-### Priced Holdings
-
-Example:
-
-GET /portfolio/priced-holdings
-
-Returns each holding with:
-
-symbol
-quantity
-average_price
-invested_amount
-current_price
-market_value
-unrealized_gain_loss
-unrealized_return_percent
-price_source
-
-### Portfolio Summary
-
-Example:
-
-GET /portfolio/summary
-
-The portfolio summary now uses latest available market prices when possible.
+- Price source
 
 If market data is unavailable, Trader Lab falls back to the holding average price so the portfolio still works.
+
+## Run Tests
+
+From the backend folder:
+
+python -m pytest -v
+
+## Run Smoke Test
+
+Start the backend first:
+
+cd backend
+source .venv/bin/activate
+uvicorn app.main:app --reload --port 8002
+
+Then in another terminal from the project root:
+
+./scripts/smoke-test.sh
+
+## Current Development Plan
+
+Phase 1 is complete.
+
+Next phase:
+
+Phase 2 - Frontend MVP
+
+Planned frontend features:
+
+- Dashboard page
+- Portfolio cards
+- Buy form
+- Sell form
+- Stock search
+- Holdings table
+- Priced holdings table
+- Trade history table
+- Basic clean UI
