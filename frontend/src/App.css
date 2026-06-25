@@ -526,3 +526,58 @@ select:focus {
     justify-content: flex-start;
   }
 }
+
+.state-panel {
+  display: flex;
+  justify-content: space-between;
+  gap: 22px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 28px;
+  border: 1px solid #263244;
+  border-radius: 24px;
+  background: #111827;
+}
+
+.state-panel h2 {
+  margin-bottom: 8px;
+}
+
+.state-panel p {
+  margin-bottom: 0;
+  color: #a7b4c8;
+  line-height: 1.6;
+}
+
+.error-panel {
+  border-color: rgba(255, 122, 122, 0.45);
+}
+
+.loading-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #9cff7a;
+  box-shadow: 0 0 0 rgba(156, 255, 122, 0.7);
+  animation: pulse 1.4s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(156, 255, 122, 0.55);
+  }
+
+  70% {
+    box-shadow: 0 0 0 16px rgba(156, 255, 122, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(156, 255, 122, 0);
+  }
+}
+
+@media (max-width: 700px) {
+  .state-panel {
+    display: grid;
+  }
+}

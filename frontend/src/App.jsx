@@ -4,6 +4,7 @@ import {
   getPricedHoldings,
   getTradeHistory,
 } from './api/client'
+import { ErrorState, LoadingState } from './components/AppState'
 import HoldingsTable from './components/HoldingsTable'
 import ResetPortfolioButton from './components/ResetPortfolioButton'
 import SellTradeForm from './components/SellTradeForm'
@@ -17,9 +18,19 @@ function App() {
   const [holdings, setHoldings] = useState([])
   const [trades, setTrades] = useState([])
   const [apiStatus, setApiStatus] = useState('Checking backend connection...')
+  const [errorMessage, setErrorMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
-  async function loadDashboard() {
+  async function loadDashboard({ showFullLoading = false } = {}) {
+    if (showFullLoading) {
+      setIsLoading(true)
+    } else {
+      setIsRefreshing(true)
+    }
+
+    setErrorMessage('')
+
     try {
       const [summaryData, holdingsData, tradesData] = await Promise.all([
         getPortfolioSummary(),
@@ -32,14 +43,16 @@ function App() {
       setTrades(tradesData)
       setApiStatus('Backend connected')
     } catch (error) {
-      setApiStatus(`Backend not connected: ${error.message}`)
+      setApiStatus('Backend disconnected')
+      setErrorMessage(error.message)
     } finally {
       setIsLoading(false)
+      setIsRefreshing(false)
     }
   }
 
   useEffect(() => {
-    loadDashboard()
+    loadDashboard({ showFullLoading: true })
   }, [])
 
   return (
@@ -53,32 +66,49 @@ function App() {
         </p>
       </section>
 
-      <section className="dashboard-section">
-        <div className="section-header">
-          <div>
-            <p className="section-kicker">Dashboard</p>
-            <h2>Portfolio summary</h2>
-          </div>
+      {isLoading && <LoadingState />}
 
-          <div className="header-actions">
-            <span className="connection-pill">{apiStatus}</span>
-            {summary && <ResetPortfolioButton onResetComplete={loadDashboard} />}
-          </div>
-        </div>
-
-        {isLoading && <p className="muted">Loading portfolio summary...</p>}
-
-        {!isLoading && summary && <SummaryCards summary={summary} />}
-
-        {!isLoading && !summary && (
-          <p className="error-text">
-            Start the backend on port 8002, then refresh this page.
-          </p>
-        )}
-      </section>
+      {!isLoading && errorMessage && !summary && (
+        <ErrorState
+          message={errorMessage}
+          onRetry={() => loadDashboard({ showFullLoading: true })}
+        />
+      )}
 
       {!isLoading && summary && (
         <>
+          <section className="dashboard-section">
+            <div className="section-header">
+              <div>
+                <p className="section-kicker">Dashboard</p>
+                <h2>Portfolio summary</h2>
+              </div>
+
+              <div className="header-actions">
+                <span className="connection-pill">{apiStatus}</span>
+
+                <button
+                  className="secondary-button"
+                  type="button"
+                  onClick={() => loadDashboard()}
+                  disabled={isRefreshing}
+                >
+                  {isRefreshing ? 'Refreshing...' : 'Refresh'}
+                </button>
+
+                <ResetPortfolioButton onResetComplete={loadDashboard} />
+              </div>
+            </div>
+
+            {errorMessage && (
+              <p className="warning-box">
+                Latest refresh failed: {errorMessage}
+              </p>
+            )}
+
+            <SummaryCards summary={summary} />
+          </section>
+
           <StockSearch onTradeComplete={loadDashboard} />
           <SellTradeForm holdings={holdings} onTradeComplete={loadDashboard} />
           <HoldingsTable holdings={holdings} />
