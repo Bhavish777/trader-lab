@@ -1,18 +1,25 @@
 import { useEffect, useState } from 'react'
-import { getPortfolioSummary } from './api/client'
+import { getPortfolioSummary, getPricedHoldings } from './api/client'
+import HoldingsTable from './components/HoldingsTable'
 import SummaryCards from './components/SummaryCards'
 import './App.css'
 
 function App() {
   const [summary, setSummary] = useState(null)
+  const [holdings, setHoldings] = useState([])
   const [apiStatus, setApiStatus] = useState('Checking backend connection...')
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    async function loadSummary() {
+    async function loadDashboard() {
       try {
-        const data = await getPortfolioSummary()
-        setSummary(data)
+        const [summaryData, holdingsData] = await Promise.all([
+          getPortfolioSummary(),
+          getPricedHoldings(),
+        ])
+
+        setSummary(summaryData)
+        setHoldings(holdingsData)
         setApiStatus('Backend connected')
       } catch (error) {
         setApiStatus(`Backend not connected: ${error.message}`)
@@ -21,7 +28,7 @@ function App() {
       }
     }
 
-    loadSummary()
+    loadDashboard()
   }, [])
 
   return (
@@ -55,6 +62,8 @@ function App() {
           </p>
         )}
       </section>
+
+      {!isLoading && summary && <HoldingsTable holdings={holdings} />}
     </main>
   )
 }
