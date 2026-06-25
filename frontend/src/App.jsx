@@ -1,17 +1,12 @@
 import { useEffect, useState } from 'react'
 import { getPortfolioSummary } from './api/client'
+import SummaryCards from './components/SummaryCards'
 import './App.css'
-
-function formatMoney(value) {
-  return Number(value || 0).toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  })
-}
 
 function App() {
   const [summary, setSummary] = useState(null)
   const [apiStatus, setApiStatus] = useState('Checking backend connection...')
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     async function loadSummary() {
@@ -21,6 +16,8 @@ function App() {
         setApiStatus('Backend connected')
       } catch (error) {
         setApiStatus(`Backend not connected: ${error.message}`)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -38,15 +35,24 @@ function App() {
         </p>
       </section>
 
-      <section className="status-card">
-        <h2>Phase 2 Frontend MVP</h2>
-        <p>{apiStatus}</p>
-
-        {summary && (
-          <div className="api-preview">
-            <span>Current portfolio value</span>
-            <strong>{formatMoney(summary.portfolio_value)}</strong>
+      <section className="dashboard-section">
+        <div className="section-header">
+          <div>
+            <p className="section-kicker">Dashboard</p>
+            <h2>Portfolio summary</h2>
           </div>
+
+          <span className="connection-pill">{apiStatus}</span>
+        </div>
+
+        {isLoading && <p className="muted">Loading portfolio summary...</p>}
+
+        {!isLoading && summary && <SummaryCards summary={summary} />}
+
+        {!isLoading && !summary && (
+          <p className="error-text">
+            Start the backend on port 8002, then refresh this page.
+          </p>
         )}
       </section>
     </main>
