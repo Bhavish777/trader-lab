@@ -8,6 +8,8 @@ function BuyTradeForm({ selectedStock, quote, onTradeComplete }) {
   const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const isUsdStock = quote?.currency === 'USD'
+
   useEffect(() => {
     if (selectedStock && quote) {
       setPrice(quote.price)
@@ -21,6 +23,13 @@ function BuyTradeForm({ selectedStock, quote, onTradeComplete }) {
 
     if (!selectedStock) {
       setMessage('Select a stock before buying.')
+      return
+    }
+
+    if (!isUsdStock) {
+      setMessage(
+        `${selectedStock.symbol} trades in ${quote.currency}. This demo portfolio currently supports USD trades only.`
+      )
       return
     }
 
@@ -71,6 +80,13 @@ function BuyTradeForm({ selectedStock, quote, onTradeComplete }) {
         </div>
       </div>
 
+      {!isUsdStock && (
+        <p className="warning-box">
+          {selectedStock.symbol} trades in {quote.currency}. This demo portfolio currently
+          supports USD trades only. Multi-currency trading is coming later.
+        </p>
+      )}
+
       <label>
         Quantity
         <input
@@ -79,6 +95,7 @@ function BuyTradeForm({ selectedStock, quote, onTradeComplete }) {
           min="1"
           placeholder="Example: 2"
           type="number"
+          disabled={!isUsdStock}
         />
       </label>
 
@@ -90,10 +107,11 @@ function BuyTradeForm({ selectedStock, quote, onTradeComplete }) {
           min="0"
           step="0.01"
           type="number"
+          disabled={!isUsdStock}
         />
       </label>
 
-      <button type="submit" disabled={isSubmitting}>
+      <button type="submit" disabled={isSubmitting || !isUsdStock}>
         {isSubmitting ? 'Buying...' : 'Buy Stock'}
       </button>
 

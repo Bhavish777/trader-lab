@@ -12,7 +12,7 @@ router = APIRouter(prefix="/trades", tags=["Trades"])
 @router.post("/buy", response_model=TradeResponse)
 def buy_trade(trade: TradeCreate, db: Session = Depends(get_db)):
     try:
-        return buy_stock(db, trade.symbol, trade.quantity, trade.price)
+        return buy_stock(db, trade)
     except ValueError as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
@@ -20,11 +20,11 @@ def buy_trade(trade: TradeCreate, db: Session = Depends(get_db)):
 @router.post("/sell", response_model=TradeResponse)
 def sell_trade(trade: TradeCreate, db: Session = Depends(get_db)):
     try:
-        return sell_stock(db, trade.symbol, trade.quantity, trade.price)
+        return sell_stock(db, trade)
     except ValueError as error:
         raise HTTPException(status_code=400, detail=str(error)) from error
 
 
 @router.get("", response_model=list[TradeResponse])
-def get_trades(db: Session = Depends(get_db)):
+def get_trade_history(db: Session = Depends(get_db)):
     return db.query(Trade).order_by(Trade.created_at.desc()).all()

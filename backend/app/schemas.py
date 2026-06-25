@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class TradeCreate(BaseModel):
-    symbol: str = Field(min_length=1, max_length=10)
+    symbol: str = Field(min_length=1, max_length=20)
     quantity: int = Field(gt=0)
     price: float = Field(gt=0)
 

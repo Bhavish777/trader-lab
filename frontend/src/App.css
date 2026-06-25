@@ -430,3 +430,13 @@ button:disabled {
     text-align: left;
   }
 }
+
+.warning-box {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 196, 87, 0.45);
+  border-radius: 14px;
+  background: rgba(255, 196, 87, 0.1);
+  color: #ffd37a;
+  line-height: 1.5;
+}

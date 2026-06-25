@@ -1,4 +1,4 @@
-import { formatMoney } from '../utils/formatters'
+import { formatMoney, formatTradeTime } from '../utils/formatters'
 
 function TradeHistoryTable({ trades }) {
   if (trades.length === 0) {
@@ -54,7 +54,7 @@ function TradeHistoryTable({ trades }) {
                 <td>{trade.quantity}</td>
                 <td>{formatMoney(trade.price)}</td>
                 <td>{formatMoney(trade.total_value)}</td>
-                <td>{new Date(trade.created_at).toLocaleString()}</td>
+                <td>{formatTradeTime(trade.created_at)}</td>
               </tr>
             ))}
           </tbody>

@@ -231,3 +231,20 @@ def search_symbols(query: str, country: str | None = None, limit: int = 10) -> l
     )
 
     return [stock for _, stock in scored_results[:limit]]
+
+
+def get_symbol_currency(symbol: str) -> str:
+    """Return the trading currency for a symbol when known."""
+    normalized_symbol = symbol.strip().upper()
+
+    for stock in load_stock_universe():
+        if stock["symbol"].upper() == normalized_symbol:
+            return stock["currency"]
+
+    if normalized_symbol.endswith(".NS"):
+        return "INR"
+
+    if normalized_symbol.endswith(".TO"):
+        return "CAD"
+
+    return "USD"
