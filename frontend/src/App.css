@@ -360,3 +360,73 @@ button:disabled {
     text-align: left;
   }
 }
+
+.trading-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.trade-form {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #263244;
+  border-radius: 20px;
+  background: #0b0f17;
+}
+
+.trade-form label {
+  display: grid;
+  gap: 8px;
+  color: #a7b4c8;
+  font-weight: 700;
+}
+
+.trade-form-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.trade-form-header h3 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.mini-price {
+  text-align: right;
+}
+
+.mini-price span {
+  display: block;
+  color: #748197;
+  font-size: 13px;
+}
+
+.mini-price strong {
+  display: block;
+  margin-top: 4px;
+  color: #9cff7a;
+  font-size: 20px;
+}
+
+.muted-box {
+  color: #a7b4c8;
+  line-height: 1.6;
+}
+
+@media (max-width: 850px) {
+  .trading-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trade-form-header {
+    display: grid;
+  }
+
+  .mini-price {
+    text-align: left;
+  }
+}

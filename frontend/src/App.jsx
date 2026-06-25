@@ -17,26 +17,26 @@ function App() {
   const [apiStatus, setApiStatus] = useState('Checking backend connection...')
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    async function loadDashboard() {
-      try {
-        const [summaryData, holdingsData, tradesData] = await Promise.all([
-          getPortfolioSummary(),
-          getPricedHoldings(),
-          getTradeHistory(),
-        ])
+  async function loadDashboard() {
+    try {
+      const [summaryData, holdingsData, tradesData] = await Promise.all([
+        getPortfolioSummary(),
+        getPricedHoldings(),
+        getTradeHistory(),
+      ])
 
-        setSummary(summaryData)
-        setHoldings(holdingsData)
-        setTrades(tradesData)
-        setApiStatus('Backend connected')
-      } catch (error) {
-        setApiStatus(`Backend not connected: ${error.message}`)
-      } finally {
-        setIsLoading(false)
-      }
+      setSummary(summaryData)
+      setHoldings(holdingsData)
+      setTrades(tradesData)
+      setApiStatus('Backend connected')
+    } catch (error) {
+      setApiStatus(`Backend not connected: ${error.message}`)
+    } finally {
+      setIsLoading(false)
     }
+  }
 
+  useEffect(() => {
     loadDashboard()
   }, [])
 
@@ -74,7 +74,7 @@ function App() {
 
       {!isLoading && summary && (
         <>
-          <StockSearch />
+          <StockSearch onTradeComplete={loadDashboard} />
           <HoldingsTable holdings={holdings} />
           <TradeHistoryTable trades={trades} />
         </>

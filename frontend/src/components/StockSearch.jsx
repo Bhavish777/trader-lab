@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { getStockQuote, searchStocks } from '../api/client'
 import { formatMoney } from '../utils/formatters'
+import BuyTradeForm from './BuyTradeForm'
 
-function StockSearch() {
+function StockSearch({ onTradeComplete }) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [selectedStock, setSelectedStock] = useState(null)
@@ -62,56 +63,66 @@ function StockSearch() {
         </div>
       </div>
 
-      <form className="search-form" onSubmit={handleSearch}>
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search Apple, Tesla, Reliance, Shopify..."
-        />
+      <div className="trading-grid">
+        <div>
+          <form className="search-form" onSubmit={handleSearch}>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search Apple, Tesla, Reliance, Shopify..."
+            />
 
-        <button type="submit" disabled={isSearching}>
-          {isSearching ? 'Searching...' : 'Search'}
-        </button>
-      </form>
-
-      {message && <p className="inline-message">{message}</p>}
-
-      {results.length > 0 && (
-        <div className="stock-results">
-          {results.map((stock) => (
-            <button
-              key={`${stock.symbol}-${stock.exchange}`}
-              className="stock-result"
-              type="button"
-              onClick={() => handleSelectStock(stock)}
-            >
-              <strong>{stock.symbol}</strong>
-              <span>{stock.name}</span>
-              <small>
-                {stock.exchange} · {stock.currency} · {stock.country}
-              </small>
+            <button type="submit" disabled={isSearching}>
+              {isSearching ? 'Searching...' : 'Search'}
             </button>
-          ))}
+          </form>
+
+          {message && <p className="inline-message">{message}</p>}
+
+          {results.length > 0 && (
+            <div className="stock-results">
+              {results.map((stock) => (
+                <button
+                  key={`${stock.symbol}-${stock.exchange}`}
+                  className="stock-result"
+                  type="button"
+                  onClick={() => handleSelectStock(stock)}
+                >
+                  <strong>{stock.symbol}</strong>
+                  <span>{stock.name}</span>
+                  <small>
+                    {stock.exchange} · {stock.currency} · {stock.country}
+                  </small>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {selectedStock && quote && (
+            <article className="quote-card">
+              <div>
+                <p className="quote-label">Selected stock</p>
+                <h3>{selectedStock.name}</h3>
+                <p className="muted">
+                  {selectedStock.symbol} · {selectedStock.exchange} · {selectedStock.country}
+                </p>
+              </div>
+
+              <div className="quote-price">
+                <span>Latest price</span>
+                <strong>{formatMoney(quote.price, quote.currency)}</strong>
+                <small>{quote.source}</small>
+              </div>
+            </article>
+          )}
         </div>
-      )}
 
-      {selectedStock && quote && (
-        <article className="quote-card">
-          <div>
-            <p className="quote-label">Selected stock</p>
-            <h3>{selectedStock.name}</h3>
-            <p className="muted">
-              {selectedStock.symbol} · {selectedStock.exchange} · {selectedStock.country}
-            </p>
-          </div>
-
-          <div className="quote-price">
-            <span>Latest price</span>
-            <strong>{formatMoney(quote.price, quote.currency)}</strong>
-            <small>{quote.source}</small>
-          </div>
-        </article>
-      )}
+        <BuyTradeForm
+          selectedStock={selectedStock}
+          quote={quote}
+          onTradeComplete={onTradeComplete}
+        />
+      </div>
     </section>
   )
 }
