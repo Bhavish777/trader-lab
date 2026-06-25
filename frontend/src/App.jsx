@@ -5,6 +5,7 @@ import {
   getTradeHistory,
 } from './api/client'
 import HoldingsTable from './components/HoldingsTable'
+import SellTradeForm from './components/SellTradeForm'
 import StockSearch from './components/StockSearch'
 import SummaryCards from './components/SummaryCards'
 import TradeHistoryTable from './components/TradeHistoryTable'
@@ -75,6 +76,7 @@ function App() {
       {!isLoading && summary && (
         <>
           <StockSearch onTradeComplete={loadDashboard} />
+          <SellTradeForm holdings={holdings} onTradeComplete={loadDashboard} />
           <HoldingsTable holdings={holdings} />
           <TradeHistoryTable trades={trades} />
         </>

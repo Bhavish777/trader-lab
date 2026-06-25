@@ -440,3 +440,53 @@ button:disabled {
   color: #ffd37a;
   line-height: 1.5;
 }
+
+select {
+  width: 100%;
+  border: 1px solid #263244;
+  border-radius: 14px;
+  padding: 13px 14px;
+  background: #0b0f17;
+  color: #f4f7fb;
+  outline: none;
+}
+
+select:focus {
+  border-color: #9cff7a;
+}
+
+.sell-form {
+  max-width: 760px;
+}
+
+.sell-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.sell-preview div {
+  padding: 14px;
+  border: 1px solid #263244;
+  border-radius: 16px;
+  background: #111827;
+}
+
+.sell-preview span {
+  display: block;
+  margin-bottom: 6px;
+  color: #748197;
+  font-size: 13px;
+}
+
+.sell-preview strong {
+  display: block;
+  color: #f4f7fb;
+  font-size: 20px;
+}
+
+@media (max-width: 700px) {
+  .sell-preview {
+    grid-template-columns: 1fr;
+  }
+}
