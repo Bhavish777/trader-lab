@@ -1,16 +1,29 @@
-# React + Vite
+# Trader Lab Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for Trader Lab.
 
-Currently, two official plugins are available:
+The goal of this part of the project is to make the trading dashboard feel usable instead of just showing API data. Users can search for stocks, check a quote, place demo trades, and see how their portfolio changes.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What it does right now
 
-## React Compiler
+The frontend currently lets a user:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- See a portfolio summary
+- Search for stocks
+- Preview the latest stock quote
+- Buy supported USD stocks
+- Sell stocks they already hold
+- View priced holdings
+- View trade history
+- Reset the demo portfolio
+- See loading and error messages when something is not working
 
-## Expanding the ESLint configuration
+## Current limitations
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+This is still an MVP version.
+
+Right now, the demo portfolio supports USD trades only. Stocks from other markets, such as Indian or Canadian listings, can still be searched and viewed, but buying them is blocked until multi-currency support is added.
+
+The app also does not have user accounts yet, so it currently works as one demo portfolio instead of separate portfolios for different users.
+
+The design is still early and will be improved in later phases.
