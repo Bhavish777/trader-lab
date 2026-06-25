@@ -67,3 +67,22 @@ h1 {
   color: #a7b4c8;
   line-height: 1.6;
 }
+
+.api-preview {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid #263244;
+  border-radius: 18px;
+  background: #0b0f17;
+}
+
+.api-preview span {
+  display: block;
+  margin-bottom: 8px;
+  color: #a7b4c8;
+}
+
+.api-preview strong {
+  display: block;
+  font-size: 30px;
+}

@@ -1,6 +1,32 @@
+import { useEffect, useState } from 'react'
+import { getPortfolioSummary } from './api/client'
 import './App.css'
 
+function formatMoney(value) {
+  return Number(value || 0).toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  })
+}
+
 function App() {
+  const [summary, setSummary] = useState(null)
+  const [apiStatus, setApiStatus] = useState('Checking backend connection...')
+
+  useEffect(() => {
+    async function loadSummary() {
+      try {
+        const data = await getPortfolioSummary()
+        setSummary(data)
+        setApiStatus('Backend connected')
+      } catch (error) {
+        setApiStatus(`Backend not connected: ${error.message}`)
+      }
+    }
+
+    loadSummary()
+  }, [])
+
   return (
     <main className="app">
       <section className="hero">
@@ -14,9 +40,14 @@ function App() {
 
       <section className="status-card">
         <h2>Phase 2 Frontend MVP</h2>
-        <p>
-          Frontend setup is working. Next we will connect this dashboard to the backend API.
-        </p>
+        <p>{apiStatus}</p>
+
+        {summary && (
+          <div className="api-preview">
+            <span>Current portfolio value</span>
+            <strong>{formatMoney(summary.portfolio_value)}</strong>
+          </div>
+        )}
       </section>
     </main>
   )
