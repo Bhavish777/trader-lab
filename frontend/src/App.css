@@ -217,3 +217,23 @@ td {
   color: #a7b4c8;
   font-size: 12px;
 }
+
+.trade-pill {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trade-pill-buy {
+  background: rgba(156, 255, 122, 0.14);
+  color: #9cff7a;
+}
+
+.trade-pill-sell {
+  background: rgba(255, 122, 122, 0.14);
+  color: #ff7a7a;
+}
