@@ -490,3 +490,39 @@ select:focus {
     grid-template-columns: 1fr;
   }
 }
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+}
+
+.reset-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.secondary-button {
+  border: 1px solid #263244;
+  background: #0b0f17;
+  color: #f4f7fb;
+}
+
+.secondary-button:hover {
+  border-color: #9cff7a;
+}
+
+.reset-message {
+  color: #a7b4c8;
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  .header-actions {
+    justify-content: flex-start;
+  }
+}

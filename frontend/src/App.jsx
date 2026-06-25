@@ -5,6 +5,7 @@ import {
   getTradeHistory,
 } from './api/client'
 import HoldingsTable from './components/HoldingsTable'
+import ResetPortfolioButton from './components/ResetPortfolioButton'
 import SellTradeForm from './components/SellTradeForm'
 import StockSearch from './components/StockSearch'
 import SummaryCards from './components/SummaryCards'
@@ -59,7 +60,10 @@ function App() {
             <h2>Portfolio summary</h2>
           </div>
 
-          <span className="connection-pill">{apiStatus}</span>
+          <div className="header-actions">
+            <span className="connection-pill">{apiStatus}</span>
+            {summary && <ResetPortfolioButton onResetComplete={loadDashboard} />}
+          </div>
         </div>
 
         {isLoading && <p className="muted">Loading portfolio summary...</p>}
