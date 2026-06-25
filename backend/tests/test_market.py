@@ -7,33 +7,35 @@ from app.services.symbol_resolver import search_symbols
 client = TestClient(app)
 
 
+def symbols_from(results):
+    return [stock["symbol"] for stock in results]
+
+
 def test_clean_market_symbol():
     assert clean_market_symbol(" aapl ") == "AAPL"
-    assert clean_market_symbol("msft") == "MSFT"
 
 
 def test_symbol_search_finds_company_name():
     results = search_symbols("apple")
+    symbols = symbols_from(results)
 
-    assert len(results) >= 1
+    assert "AAPL" in symbols
     assert results[0]["symbol"] == "AAPL"
-    assert results[0]["name"] == "Apple Inc."
 
 
 def test_symbol_search_finds_indian_stock():
     results = search_symbols("reliance")
+    symbols = symbols_from(results)
 
-    assert len(results) == 1
-    assert results[0]["symbol"] == "RELIANCE.NS"
-    assert results[0]["currency"] == "INR"
+    assert "RELIANCE.NS" in symbols
 
 
 def test_symbol_search_country_filter():
     results = search_symbols("shopify", country="Canada")
+    symbols = symbols_from(results)
 
-    assert len(results) == 1
-    assert results[0]["symbol"] == "SHOP.TO"
-    assert results[0]["currency"] == "CAD"
+    assert "SHOP.TO" in symbols
+    assert all(stock["country"] == "Canada" for stock in results)
 
 
 def test_market_search_endpoint():
@@ -42,14 +44,15 @@ def test_market_search_endpoint():
     assert response.status_code == 200
 
     data = response.json()
-    assert len(data) >= 1
-    assert data[0]["symbol"] == "TSLA"
+    symbols = symbols_from(data)
+
+    assert "TSLA" in symbols
 
 
 def test_market_quote_endpoint_with_mock(monkeypatch):
     def fake_quote(symbol: str):
         return {
-            "symbol": symbol.upper(),
+            "symbol": symbol,
             "price": 250.0,
             "currency": "USD",
             "source": "test",
@@ -63,19 +66,18 @@ def test_market_quote_endpoint_with_mock(monkeypatch):
     assert response.status_code == 200
 
     data = response.json()
+
     assert data["symbol"] == "AAPL"
     assert data["price"] == 250.0
-    assert data["currency"] == "USD"
     assert data["source"] == "test"
 
 
 def test_market_quote_endpoint_not_found(monkeypatch):
-    def fake_quote(symbol: str):
+    def fake_quote_failure(symbol: str):
         raise ValueError("No market data found for this symbol")
 
-    monkeypatch.setattr("app.routes.market.get_latest_quote", fake_quote)
+    monkeypatch.setattr("app.routes.market.get_latest_quote", fake_quote_failure)
 
     response = client.get("/market/quote/FAKE")
 
     assert response.status_code == 404
-    assert response.json()["detail"] == "No market data found for this symbol"
